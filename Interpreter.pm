@@ -18,6 +18,7 @@ sub new
 
   my $self = {};
   $self->{parser} = shift();
+  $self->{GLOBAL} = {}; # no variables to begin with
 
   bless($self, $class);
 
@@ -29,7 +30,11 @@ sub visit
   my $self = shift();
   my $node = shift();
 
-  if (ref($node) eq 'UnaryOp')
+  if (ref($node) eq 'NoOp')
+  {
+    return $self->visitNoOp($node);
+  }
+  elsif (ref($node) eq 'UnaryOp')
   {
     return $self->visitUnaryOp($node);
   }
@@ -41,10 +46,28 @@ sub visit
   {
     return $self->visitNumber($node);
   }
+  elsif (ref($node) eq 'Compound')
+  {
+    return $self->visitCompound($node);
+  }
+  elsif (ref($node) eq 'Assign')
+  {
+    return $self->visitAssign($node);
+  }
+  elsif (ref($node) eq 'Variable')
+  {
+    return $self->visitVariable($node);
+  }
   else
   {
-    croak("Unknown visit");
+    croak("Unknown visit: " . ref($node));
   }
+}
+
+sub visitNoOp
+{
+  my $self = shift();
+  my $node = shift();
 }
 
 sub visitUnaryOp
@@ -111,6 +134,43 @@ sub visitNumber
   my $node = shift();
 
   return $node->{value};
+}
+
+sub visitCompound
+{
+  my $self = shift();
+  my $node = shift();
+
+  foreach my $child (@{$node->{children}})
+  {
+    $self->visit($child);
+  }
+}
+
+sub visitAssign
+{
+  my $self = shift();
+  my $node = shift();
+
+  my $vname = $node->{left}{name};
+  $self->{GLOBAL}{$vname} = $self->visit($node->{right});
+}
+
+sub visitVariable
+{
+  my $self = shift();
+  my $node = shift();
+
+  my $vname = $node->{name};
+  my $val = $self->{GLOBAL}{$vname};
+  if (!defined($val))
+  {
+    croak("Referencing an unknown variable: " . $vname);
+  }
+  else
+  {
+    return $val;
+  }
 }
 
 sub interpret

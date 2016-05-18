@@ -7,6 +7,21 @@ use Lexer;
 use Parser;
 use Interpreter;
 
+use Data::Dumper;
+
+my $file = $ARGV[0];
+open(my $fh, '<', $file) or die "Can't read source file: $!\n";
+my $script = join('', <$fh>);
+close($fh);
+
+my $lexer = Lexer->new($script);
+my $parser = Parser->new($lexer);
+my $interpreter = Interpreter->new($parser);
+$interpreter->interpret();
+
+print Dumper($interpreter->{GLOBAL});
+
+=cut
 while (1)
 {
   chomp(my $input = <STDIN>);
@@ -17,8 +32,7 @@ while (1)
     my $lexer = Lexer->new($input);
     my $parser = Parser->new($lexer);
     my $interpreter = Interpreter->new($parser);
-    my $result = $interpreter->interpret();
-    print "$result\n";
+    print $interpreter->interpret() . "\n";
   };
   if ($@)
   {

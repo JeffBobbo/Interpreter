@@ -12,9 +12,13 @@ our @EXPORT = qw();
 
 use Token;
 
+use Assign;
+use Variable;
+use Compound;
 use Number;
 use UnaryOp;
 use BinOp;
+use NoOp;
 
 sub new
 {
@@ -48,7 +52,7 @@ sub eat
   }
   else
   {
-    $self->error("Failed to eat $tokenType");
+    $self->error("Failed to eat " . fromType($tokenType) . ", got " . $self->{token}->toString() . " at " . $self->{lexer}->at());
   }
 }
 
@@ -84,7 +88,7 @@ sub factor
   }
   else
   {
-    $self->error("Parser::factor() -- $token->{type}");
+    return $self->variable();
   }
 }
 
@@ -160,10 +164,107 @@ sub expr
   return $node;
 }
 
+sub empty
+{
+  # don't care about self
+  return NoOp->new();
+}
+
+sub variable
+{
+  my $self = shift();
+
+  my $node = Variable->new($self->{token});
+  $self->eat(ID);
+  return $node;
+}
+
+sub assignment_statement
+{
+  my $self = shift();
+
+  my $left  = $self->variable();
+  my $token = $self->{token};
+  $self->eat(ASSIGN);
+  my $right = $self->expr();
+  my $node = Assign->new($left, $token, $right);
+  return $node;
+}
+
+sub statement
+{
+  my $self = shift();
+
+  if ($self->{token}{type} == BLOCK_BEGIN)
+  {
+    return $self->compound_statement();
+  }
+  elsif ($self->{token}{type} == ID)
+  {
+    return $self->assignment_statement();
+  }
+  else
+  {
+    return $self->empty();
+  }
+}
+
+sub statement_list
+{
+  my $self = shift();
+
+  my $node = $self->statement();
+
+  my $results = [$node];
+
+  while ($self->{token}{type} == SEMICOLON)
+  {
+    $self->eat(SEMICOLON);
+    push(@{$results}, $self->statement())
+  }
+
+  if ($self->{token}{type} == ID)
+  {
+    $self->error("Bad syntax: identifier found but wasn't expected");
+  }
+
+  return $results;
+}
+
+sub compound_statement
+{
+  my $self = shift();
+  $self->eat(BLOCK_BEGIN);
+  my $nodes = $self->statement_list();
+  $self->eat(BLOCK_END);
+
+  my $root = Compound->new();
+  foreach my $node (@{$nodes})
+  {
+    push(@{$root->{children}}, $node);
+  }
+  return $root;
+}
+
+sub program
+{
+  my $self = shift();
+  my $node = $self->compound_statement();
+  #$self->eat(PERIOD);
+  return $node;
+}
+
+
 sub parse
 {
   my $self = shift();
-  return $self->expr();
+
+  my $node = $self->program();
+  if ($self->{token}{type} != EOF)
+  {
+    $self->error("Unexpected end of input");
+  }
+  return $node;
 }
 
 1;
