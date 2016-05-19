@@ -148,7 +148,7 @@ sub number
 {
   my $self = shift();
   my $r = '';
-  while (defined $self->{char} && $self->{char} =~ /[\d\.]/)
+  while (defined $self->{char} && $self->{char} =~ /\d|(?:\d?\.\d?)/)
   {
     $r .= $self->{char};
     $self->advance();
@@ -169,7 +169,7 @@ sub nextToken
       next;
     }
 
-    if ($self->{char} =~ /[\d\.]/)
+    if (($self->{char} eq '.' && $self->peek() =~ /\d/) || $self->{char} =~ /\d/)
     {
       return Token->new(NUMBER, $self->number());
     }
