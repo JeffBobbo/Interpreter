@@ -168,12 +168,6 @@ sub expr
   return $node;
 }
 
-sub empty
-{
-  # don't care about self
-  return NoOp->new();
-}
-
 sub variable
 {
   my $self = shift();
@@ -195,6 +189,12 @@ sub assignment_statement
   return $node;
 }
 
+sub void_statement
+{
+  # don't care about self
+  return NoOp->new();
+}
+
 sub statement
 {
   my $self = shift();
@@ -209,7 +209,7 @@ sub statement
   }
   else
   {
-    return $self->empty();
+    return $self->void_statement();
   }
 }
 
@@ -220,10 +220,10 @@ sub statement_list
   my @statements;
 
   push(@statements, $self->statement());
-  while ($self->{token}{type} == SEMICOLON)
+  while (ref($statements[-1]) eq 'Compound' || $self->{token}{type} == SEMICOLON)
   {
-    $self->eat(SEMICOLON);
-    push(@statements, $self->statement())
+    $self->eat(SEMICOLON) if (ref($statements[-1]) ne 'Compound');
+    push(@statements, $self->statement());
   }
 
   return \@statements;
@@ -248,7 +248,6 @@ sub program
 {
   my $self = shift();
   my $node = $self->compound_statement();
-  #$self->eat(PERIOD);
   return $node;
 }
 
