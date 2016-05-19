@@ -6,7 +6,7 @@ use warnings;
 use strict;
 
 use Exporter qw(import);
-our @EXPORT = qw(NUMBER ADDITION SUBTRACTION MULTIPLY DIVIDE POWER FACTORIAL L_PARENTHESIS R_PARENTHESIS BLOCK_BEGIN BLOCK_END SEMICOLON PERIOD ASSIGN ID EOF fromType);
+our @EXPORT = qw(NUMBER ADDITION SUBTRACTION MULTIPLY DIVIDE POWER FACTORIAL L_PARENTHESIS R_PARENTHESIS BLOCK_BEGIN BLOCK_END ID ASSIGN SEMICOLON PERIOD EOF fromType);
 
 use constant
 {
@@ -21,10 +21,10 @@ use constant
   R_PARENTHESIS => 0x8,
   BLOCK_BEGIN   => 0x9,
   BLOCK_END     => 0xA,
+  ID            => 0xE,
+  ASSIGN        => 0xD,
   SEMICOLON     => 0xB,
   PERIOD        => 0xC,
-  ASSIGN        => 0xD,
-  ID            => 0xE,
   EOF           => 0xF
 };
 
@@ -57,10 +57,10 @@ sub toString
   $tStr = ')' if ($self->{type} == R_PARENTHESIS);
   $tStr = '{' if ($self->{type} == BLOCK_BEGIN);
   $tStr = '}' if ($self->{type} == BLOCK_END);
+  $tStr = 'ID' if ($self->{type} == ID);
+  $tStr = '=' if ($self->{type} == ASSIGN);
   $tStr = ';' if ($self->{type} == SEMICOLON);
   $tStr = '.' if ($self->{type} == PERIOD);
-  $tStr = '=' if ($self->{type} == ASSIGN);
-  $tStr = 'ID' if ($self->{type} == ID);
   $tStr = 'EOF' if ($self->{type} == EOF);
 
 
@@ -83,10 +83,10 @@ sub fromType
   $tStr = ')' if ($type == R_PARENTHESIS);
   $tStr = '{' if ($type == BLOCK_BEGIN);
   $tStr = '}' if ($type == BLOCK_END);
+  $tStr = 'ID' if ($type == ID);
+  $tStr = '=' if ($type == ASSIGN);
   $tStr = ';' if ($type == SEMICOLON);
   $tStr = '.' if ($type == PERIOD);
-  $tStr = '=' if ($type == ASSIGN);
-  $tStr = 'ID' if ($type == ID);
   $tStr = 'EOF' if ($type == EOF);
 
 
