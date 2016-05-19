@@ -84,6 +84,7 @@ sub peek
   return substr($self->{text}, $pos, 1);
 }
 
+# returns the file name, the line number and the position on the line
 sub at
 {
   my $self = shift();
@@ -91,6 +92,7 @@ sub at
 }
 
 # advance the pos pointer and set char to the next character to parse
+# also controls line and position counting for at()
 sub advance
 {
   my $self = shift();
