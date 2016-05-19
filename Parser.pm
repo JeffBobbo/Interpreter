@@ -33,12 +33,16 @@ sub new
   return $self;
 }
 
+sub warning
+{
+  my $self = shift();
+  $self->{lexer}->warning(@_);
+}
+
 sub error
 {
   my $self = shift();
-  my $message = shift();
-
-  croak("Invalid syntax: " . $message);
+  $self->{lexer}->error(@_);
 }
 
 sub eat
@@ -52,7 +56,7 @@ sub eat
   }
   else
   {
-    $self->error("Failed to eat " . fromType($tokenType) . ", got " . $self->{token}->toString() . " at " . $self->{lexer}->at());
+    $self->error("exptected " . fromType($tokenType) . ", got " . $self->{token}->toString());
   }
 }
 
@@ -213,22 +217,16 @@ sub statement_list
 {
   my $self = shift();
 
-  my $node = $self->statement();
+  my @statements;
 
-  my $results = [$node];
-
+  push (@statements, $self->statement());
   while ($self->{token}{type} == SEMICOLON)
   {
     $self->eat(SEMICOLON);
-    push(@{$results}, $self->statement())
+    push(@statements, $self->statement())
   }
 
-  if ($self->{token}{type} == ID)
-  {
-    $self->error("Bad syntax: identifier found but wasn't expected");
-  }
-
-  return $results;
+  return \@statements;
 }
 
 sub compound_statement
@@ -262,7 +260,7 @@ sub parse
   my $node = $self->program();
   if ($self->{token}{type} != EOF)
   {
-    $self->error("Unexpected end of input");
+    $self->error("unexpected end of input");
   }
   return $node;
 }

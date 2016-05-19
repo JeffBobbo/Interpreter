@@ -18,6 +18,7 @@ sub new
 
   my $self = {};
   $self->{text} = shift();
+  $self->{file} = shift();
   $self->{pos} = 0;
   $self->{line} = 1;
   $self->{lpos} = 1;
@@ -27,12 +28,48 @@ sub new
   return $self;
 }
 
+sub warning
+{
+  my $self = shift();
+  my $message = shift();
+
+  print $self->at() . ': warning: ' . $message . "\n";
+  $self->println($self->{line}, $self->{lpos});
+}
+
 sub error
 {
   my $self = shift();
   my $message = shift();
 
-  croak("Lexer: $message");
+  print $self->at() . ': error: ' . $message . "\n";
+  $self->println($self->{line}, $self->{lpos});
+  exit();
+}
+
+sub println
+{
+  my $self = shift();
+  my $num = shift();
+
+  my $pointerPos = shift();
+
+  my $i = 1;
+  my $index = 0;
+  while ($i < $num)
+  {
+    $index = index($self->{text}, "\n", $index+1) + 1;
+    $i++;
+  }
+  my $line = substr($self->{text}, $index, index($self->{text}, "\n", $index) - $index);
+  print $line . "\n";
+
+  if (defined($pointerPos))
+  {
+    $pointerPos -= 2; # take 1 for 1 index, another to fit the claret in
+    print ' ' x $pointerPos if ($pointerPos > 0);
+    print "^\n";
+  }
 }
 
 # return what the next character is, without incrementing our position
@@ -50,7 +87,7 @@ sub peek
 sub at
 {
   my $self = shift();
-  return $self->{line} . ":" . $self->{lpos};
+  return $self->{file} . ':' . $self->{line} . ':' . $self->{lpos};
 }
 
 # advance the pos pointer and set char to the next character to parse
@@ -212,7 +249,7 @@ sub nextToken
     }
 
     # not returned anything but we're not at the end of the stream, so error out
-    $self->error("Unknown token: " . $self->{char});
+    $self->error("unrecognized token: '" . $self->{char} . "'");
   }
   return Token->new(EOF, undef);
 }

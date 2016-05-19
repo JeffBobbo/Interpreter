@@ -14,7 +14,7 @@ open(my $fh, '<', $file) or die "Can't read source file: $!\n";
 my $script = join('', <$fh>);
 close($fh);
 
-my $lexer = Lexer->new($script);
+my $lexer = Lexer->new($script, $file);
 my $parser = Parser->new($lexer);
 my $interpreter = Interpreter->new($parser);
 $interpreter->interpret();
