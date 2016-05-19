@@ -56,7 +56,7 @@ sub eat
   }
   else
   {
-    $self->error("exptected " . fromType($tokenType) . ", got " . $self->{token}->toString());
+    $self->error("expected " . fromType($tokenType) . ", got " . $self->{token}->toString());
   }
 }
 
@@ -219,7 +219,7 @@ sub statement_list
 
   my @statements;
 
-  push (@statements, $self->statement());
+  push(@statements, $self->statement());
   while ($self->{token}{type} == SEMICOLON)
   {
     $self->eat(SEMICOLON);
