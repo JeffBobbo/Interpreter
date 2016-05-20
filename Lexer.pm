@@ -176,38 +176,59 @@ sub nextToken
       return Token->new(NUMBER, $self->number());
     }
 
-    if ($self->{char} eq '+')
+    if ($self->{char} eq '+' && $self->peek() ne '=')
     {
       $self->advance();
       return Token->new(ADDITION, '+');
     }
-    if ($self->{char} eq '-')
+    if ($self->{char} eq '-' && $self->peek() ne '=')
     {
       $self->advance();
       return Token->new(SUBTRACTION, '-');
     }
 
-    if ($self->{char} eq '*')
+    if ($self->{char} eq '*' && ($self->peek() ne '*' && $self->peek() ne '='))
     {
       $self->advance();
       return Token->new(MULTIPLY, '*');
     }
-    if ($self->{char} eq '/')
+    if ($self->{char} eq '/' && $self->peek() ne '/')
     {
       $self->advance();
       return Token->new(DIVIDE, '/');
     }
 
-    if ($self->{char} eq '^')
+    if ($self->{char} eq '*' && $self->peek() eq '*')
     {
       $self->advance();
-      return Token->new(POWER, '^');
+      $self->advance();
+      return Token->new(POWER, '**');
     }
-
     if ($self->{char} eq '!')
     {
       $self->advance();
       return Token->new(FACTORIAL, '!');
+    }
+
+    if ($self->{char} eq '&' && $self->peek() ne '&')
+    {
+      $self->advance();
+      return Token->new(BITWISE_AND, '&');
+    }
+    if ($self->{char} eq '|' && $self->peek() ne '|')
+    {
+      $self->advance();
+      return Token->new(BITWISE_OR, '|');
+    }
+    if ($self->{char} eq '^')
+    {
+      $self->advance();
+      return Token->new(BITWISE_XOR, '^');
+    }
+    if ($self->{char} eq '~')
+    {
+      $self->advance();
+      return Token->new(BITWISE_NOT, '~');
     }
 
     if ($self->{char} eq '(')

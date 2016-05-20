@@ -83,6 +83,12 @@ sub factor
     my $node = UnaryOp->new($token, $self->factor());
     return $node;
   }
+  elsif ($token->{type} == BITWISE_NOT)
+  {
+    $self->eat(BITWISE_NOT);
+    my $node = UnaryOp->new($token, $self->factor());
+    return $node;
+  }
   elsif ($token->{type} == L_PARENTHESIS)
   {
     $self->eat(L_PARENTHESIS);
@@ -152,7 +158,7 @@ sub expr
 
   my $node = $self->term();
 
-  while ($self->{token}{type} == ADDITION || $self->{token}{type} == SUBTRACTION)
+  while ($self->{token}{type} == ADDITION || $self->{token}{type} == SUBTRACTION || $self->{token}{type} == BITWISE_AND || $self->{token}{type} == BITWISE_OR || $self->{token}{type} == BITWISE_XOR)
   {
     my $token = $self->{token};
     if ($token->{type} == ADDITION)
@@ -162,6 +168,18 @@ sub expr
     elsif ($token->{type} == SUBTRACTION)
     {
       $self->eat(SUBTRACTION);
+    }
+    elsif ($token->{type} == BITWISE_AND)
+    {
+      $self->eat(BITWISE_AND);
+    }
+    elsif ($token->{type} == BITWISE_OR)
+    {
+      $self->eat(BITWISE_OR);
+    }
+    elsif ($token->{type} == BITWISE_XOR)
+    {
+      $self->eat(BITWISE_XOR);
     }
     $node = BinOp->new($node, $token, $self->term());
   }

@@ -91,6 +91,10 @@ sub visitUnaryOp
   {
     return -$self->visit($node->{expr});
   }
+  elsif ($node->{op}{type} == BITWISE_NOT)
+  {
+    return ~$self->visit($node->{expr});
+  }
   else
   {
     croak("bad unaryop visit");
@@ -121,6 +125,18 @@ sub visitBinOp
   elsif ($node->{op}{type} == DIVIDE)
   {
     return $self->visit($node->{left}) / $self->visit($node->{right});
+  }
+  elsif ($node->{op}{type} == BITWISE_AND)
+  {
+    return $self->visit($node->{left}) & $self->visit($node->{right});
+  }
+  elsif ($node->{op}{type} == BITWISE_OR)
+  {
+    return $self->visit($node->{left}) | $self->visit($node->{right});
+  }
+  elsif ($node->{op}{type} == BITWISE_XOR)
+  {
+    return $self->visit($node->{left}) ^ $self->visit($node->{right});
   }
   else
   {
@@ -165,7 +181,7 @@ sub visitVariable
   my $val = $self->{GLOBAL}{$vname};
   if (!defined($val))
   {
-    croak("Referencing an unknown variable: " . $vname);
+    $self->{parser}{lexer}->error("unknown variable '" . $vname . "'");
   }
   else
   {
