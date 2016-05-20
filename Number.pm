@@ -16,7 +16,7 @@ sub new
 
   my $self = {};
   $self->{token} = shift();
-  $self->{value} = $self->{token}->{value};
+  $self->{value} = $self->{token}->{value}+0; # bit hack, but forces perl to treat these as numbers instead of strings
 
   bless($self, $class);
 
