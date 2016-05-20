@@ -6,26 +6,31 @@ use warnings;
 use strict;
 
 use Exporter qw(import);
-our @EXPORT = qw(NUMBER ADDITION SUBTRACTION MULTIPLY DIVIDE POWER FACTORIAL L_PARENTHESIS R_PARENTHESIS BLOCK_BEGIN BLOCK_END ID ASSIGN SEMICOLON PERIOD EOF fromType);
+our @EXPORT = qw(NUMBER ADDITION SUBTRACTION MULTIPLY DIVIDE POWER FACTORIAL BITWISE_AND BITWISE_OR BITWISE_NOT BITWISE_XOR L_PARENTHESIS R_PARENTHESIS BLOCK_BEGIN BLOCK_END ID ASSIGN SEMICOLON PERIOD EOF fromType);
 
+my $i = 0;
 use constant
 {
-  NUMBER        => 0x0,
-  ADDITION      => 0x1,
-  SUBTRACTION   => 0x2,
-  MULTIPLY      => 0x3,
-  DIVIDE        => 0x4,
-  POWER         => 0x5,
-  FACTORIAL     => 0x6,
-  L_PARENTHESIS => 0x7,
-  R_PARENTHESIS => 0x8,
-  BLOCK_BEGIN   => 0x9,
-  BLOCK_END     => 0xA,
-  ID            => 0xE,
-  ASSIGN        => 0xD,
-  SEMICOLON     => 0xB,
-  PERIOD        => 0xC,
-  EOF           => 0xF
+  NUMBER        => $i++,
+  ADDITION      => $i++,
+  SUBTRACTION   => $i++,
+  MULTIPLY      => $i++,
+  DIVIDE        => $i++,
+  POWER         => $i++,
+  FACTORIAL     => $i++,
+  BITWISE_AND   => $i++,
+  BITWISE_OR    => $i++,
+  BITWISE_NOT   => $i++,
+  BITWISE_XOR   => $i++,
+  L_PARENTHESIS => $i++,
+  R_PARENTHESIS => $i++,
+  BLOCK_BEGIN   => $i++,
+  BLOCK_END     => $i++,
+  ID            => $i++,
+  ASSIGN        => $i++,
+  SEMICOLON     => $i++,
+  PERIOD        => $i++,
+  EOF           => $i++
 };
 
 sub new
@@ -45,31 +50,13 @@ sub toString
 {
   my $self = shift();
 
-  my $tStr = 'UNDEF';
-  $tStr = 'NUMBER' if ($self->{type} == NUMBER);
-  $tStr = 'ADDITION' if ($self->{type} == ADDITION);
-  $tStr = 'SUBTRACTION' if ($self->{type} == SUBTRACTION);
-  $tStr = 'MULTIPLY' if ($self->{type} == MULTIPLY);
-  $tStr = 'DIVIDE' if ($self->{type} == DIVIDE);
-  $tStr = 'POWER' if ($self->{type} == POWER);
-  $tStr = 'FACTORIAL' if ($self->{type} == FACTORIAL);
-  $tStr = '(' if ($self->{type} == L_PARENTHESIS);
-  $tStr = ')' if ($self->{type} == R_PARENTHESIS);
-  $tStr = '{' if ($self->{type} == BLOCK_BEGIN);
-  $tStr = '}' if ($self->{type} == BLOCK_END);
-  $tStr = 'ID' if ($self->{type} == ID);
-  $tStr = '=' if ($self->{type} == ASSIGN);
-  $tStr = ';' if ($self->{type} == SEMICOLON);
-  $tStr = '.' if ($self->{type} == PERIOD);
-  $tStr = 'EOF' if ($self->{type} == EOF);
-
-
-  return "Token($tStr" . (defined($self->{vaule}) ? ", $self->{value})" : ")");
+  return fromType($self->{type}, $self->{value});
 }
 
 sub fromType
 {
   my $type = shift();
+  my $value = shift();
 
   my $tStr = 'UNDEF';
   $tStr = 'NUMBER' if ($type == NUMBER);
@@ -79,18 +66,21 @@ sub fromType
   $tStr = 'DIVIDE' if ($type == DIVIDE);
   $tStr = 'POWER' if ($type == POWER);
   $tStr = 'FACTORIAL' if ($type == FACTORIAL);
-  $tStr = '(' if ($type == L_PARENTHESIS);
-  $tStr = ')' if ($type == R_PARENTHESIS);
-  $tStr = '{' if ($type == BLOCK_BEGIN);
-  $tStr = '}' if ($type == BLOCK_END);
+  $tStr = 'BITWISE_AND' if ($type == BITWISE_AND);
+  $tStr = 'BITWISE_OR' if ($type == BITWISE_OR);
+  $tStr = 'BITWISE_NOT' if ($type == BITWISE_NOT);
+  $tStr = 'BITWISE_XOR' if ($type == BITWISE_XOR);
+  $tStr = 'L_PARENTHESIS' if ($type == L_PARENTHESIS);
+  $tStr = 'R_PARENTHESIS' if ($type == R_PARENTHESIS);
+  $tStr = 'BLOCK_BEGIN' if ($type == BLOCK_BEGIN);
+  $tStr = 'BLOCK_END' if ($type == BLOCK_END);
   $tStr = 'ID' if ($type == ID);
-  $tStr = '=' if ($type == ASSIGN);
-  $tStr = ';' if ($type == SEMICOLON);
-  $tStr = '.' if ($type == PERIOD);
+  $tStr = 'ASSIGN' if ($type == ASSIGN);
+  $tStr = 'SEMICOLON' if ($type == SEMICOLON);
+  $tStr = 'PERIOD' if ($type == PERIOD);
   $tStr = 'EOF' if ($type == EOF);
 
-
-  return "Token($tStr)";
+  return "Token($tStr" . (defined($value) ? ", $value)" : ")");
 }
 
 1;
