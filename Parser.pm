@@ -158,29 +158,17 @@ sub expr
 
   my $node = $self->term();
 
-  while ($self->{token}{type} == ADDITION || $self->{token}{type} == SUBTRACTION || $self->{token}{type} == BITWISE_AND || $self->{token}{type} == BITWISE_OR || $self->{token}{type} == BITWISE_XOR)
+  while ($self->{token}{type} == ADDITION ||
+         $self->{token}{type} == SUBTRACTION ||
+         $self->{token}{type} == BITWISE_AND ||
+         $self->{token}{type} == BITWISE_OR ||
+         $self->{token}{type} == BITWISE_XOR ||
+         $self->{token}{type} == BITSHIFT_L ||
+         $self->{token}{type} == BITSHIFT_R
+        )
   {
     my $token = $self->{token};
-    if ($token->{type} == ADDITION)
-    {
-      $self->eat(ADDITION);
-    }
-    elsif ($token->{type} == SUBTRACTION)
-    {
-      $self->eat(SUBTRACTION);
-    }
-    elsif ($token->{type} == BITWISE_AND)
-    {
-      $self->eat(BITWISE_AND);
-    }
-    elsif ($token->{type} == BITWISE_OR)
-    {
-      $self->eat(BITWISE_OR);
-    }
-    elsif ($token->{type} == BITWISE_XOR)
-    {
-      $self->eat(BITWISE_XOR);
-    }
+    $self->eat($token->{type});
     $node = BinOp->new($node, $token, $self->term());
   }
   return $node;

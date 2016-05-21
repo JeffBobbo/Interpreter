@@ -138,6 +138,14 @@ sub visitBinOp
   {
     return $self->visit($node->{left}) ^ $self->visit($node->{right});
   }
+  elsif ($node->{op}{type} == BITSHIFT_R)
+  {
+    return $self->visit($node->{left}) >> $self->visit($node->{right});
+  }
+  elsif ($node->{op}{type} == BITSHIFT_L)
+  {
+    return $self->visit($node->{left}) << $self->visit($node->{right});
+  }
   else
   {
     croak("bad binop visit");
