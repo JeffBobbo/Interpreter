@@ -126,6 +126,10 @@ sub visitBinOp
   {
     return $self->visit($node->{left}) / $self->visit($node->{right});
   }
+  elsif ($node->{op}{type} == MODULO)
+  {
+    return $self->visit($node->{left}) % $self->visit($node->{right});
+  }
   elsif ($node->{op}{type} == BITWISE_AND)
   {
     return $self->visit($node->{left}) & $self->visit($node->{right});

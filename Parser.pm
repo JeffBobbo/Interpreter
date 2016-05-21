@@ -136,17 +136,12 @@ sub term
 
   my $node = $self->power();
 
-  while ($self->{token}{type} == MULTIPLY || $self->{token}{type} == DIVIDE)
+  while ($self->{token}{type} == MULTIPLY ||
+         $self->{token}{type} == DIVIDE ||
+         $self->{token}{type} == MODULO)
   {
     my $token = $self->{token};
-    if ($token->{type} == MULTIPLY)
-    {
-      $self->eat(MULTIPLY);
-    }
-    elsif ($token->{type} == DIVIDE)
-    {
-      $self->eat(DIVIDE);
-    }
+    $self->eat($token->{type});
     $node = BinOp->new($node, $token, $self->power());
   }
   return $node;

@@ -6,7 +6,7 @@ use warnings;
 use strict;
 
 use Exporter qw(import);
-our @EXPORT = qw(NUMBER ADDITION SUBTRACTION MULTIPLY DIVIDE POWER FACTORIAL BITWISE_AND BITWISE_OR BITWISE_NOT BITWISE_XOR BITSHIFT_R BITSHIFT_L L_PARENTHESIS R_PARENTHESIS BLOCK_BEGIN BLOCK_END ID ASSIGN SEMICOLON PERIOD EOF fromType);
+our @EXPORT = qw(NUMBER ADDITION SUBTRACTION MULTIPLY DIVIDE MODULO POWER FACTORIAL BITWISE_AND BITWISE_OR BITWISE_NOT BITWISE_XOR BITSHIFT_R BITSHIFT_L L_PARENTHESIS R_PARENTHESIS BLOCK_BEGIN BLOCK_END ID ASSIGN SEMICOLON PERIOD EOF fromType);
 
 my $i = 0;
 use constant
@@ -16,6 +16,7 @@ use constant
   SUBTRACTION   => $i++,
   MULTIPLY      => $i++,
   DIVIDE        => $i++,
+  MODULO        => $i++,
   POWER         => $i++,
   FACTORIAL     => $i++,
   BITWISE_AND   => $i++,
@@ -66,6 +67,7 @@ sub fromType
   $tStr = 'SUBTRACTION' if ($type == SUBTRACTION);
   $tStr = 'MULTIPLY' if ($type == MULTIPLY);
   $tStr = 'DIVIDE' if ($type == DIVIDE);
+  $tStr = 'MODULO' if ($type == MODULO);
   $tStr = 'POWER' if ($type == POWER);
   $tStr = 'FACTORIAL' if ($type == FACTORIAL);
   $tStr = 'BITWISE_AND' if ($type == BITWISE_AND);

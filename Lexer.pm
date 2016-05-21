@@ -210,11 +210,17 @@ sub nextToken
       $self->advance();
       return Token->new(MULTIPLY, '*');
     }
-    if ($self->{char} eq '/' && $self->peek() ne '/')
+    if ($self->{char} eq '/' && $self->peek() ne '=')
     {
       $self->advance();
       return Token->new(DIVIDE, '/');
     }
+    if ($self->{char} eq '%' && $self->peek() ne '=')
+    {
+      $self->advance();
+      return Token->new(MODULO, '%');
+    }
+
 
     if ($self->{char} eq '*' && $self->peek() eq '*')
     {
