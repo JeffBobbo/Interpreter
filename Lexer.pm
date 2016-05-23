@@ -150,12 +150,26 @@ sub number
 {
   my $self = shift();
   my $r = '';
-  while (defined $self->{char} && $self->{char} =~ /\d|(?:\d?\.\d?)/)
+  if ($self->{char} eq '0' && $self->peek() eq 'x')
   {
-    $r .= $self->{char};
     $self->advance();
+    $self->advance();
+    while ($self->{char} =~ /[\da-fA-F]/)
+    {
+      $r .= $self->{char};
+      $self->advance();
+      $r = hex($r);
+    }
   }
-  return $r;
+  else
+  {
+    while ($self->{char} =~ /\d|(?:\d?\.\d?)/)
+    {
+      $r .= $self->{char};
+      $self->advance();
+    }
+  }
+  return $r+0; # convert it to a number, instead of a string
 }
 
 # lexical analyser
@@ -171,7 +185,11 @@ sub nextToken
       next;
     }
 
-    if (($self->{char} eq '.' && $self->peek() =~ /\d/) || $self->{char} =~ /\d/)
+    if (($self->{char} eq '.' && $self->peek() =~ /\d/) || $self->{char} =~ /\d/ && $self->peek() ne 'x')
+    {
+      return Token->new(NUMBER, $self->number());
+    }
+    if ($self->{char} eq '0' && $self->peek() eq 'x')
     {
       return Token->new(NUMBER, $self->number());
     }
@@ -229,6 +247,18 @@ sub nextToken
     {
       $self->advance();
       return Token->new(BITWISE_NOT, '~');
+    }
+    if ($self->{char} eq '>' && $self->peek() eq '>')
+    {
+      $self->advance();
+      $self->advance();
+      return Token->new(BITSHIFT_R, '>>');
+    }
+    if ($self->{char} eq '<' && $self->peek() eq '<')
+    {
+      $self->advance();
+      $self->advance();
+      return Token->new(BITSHIFT_L, '<<');
     }
 
     if ($self->{char} eq '(')
