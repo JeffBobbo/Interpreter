@@ -10,9 +10,17 @@ use Interpreter;
 use Data::Dumper;
 
 my $file = $ARGV[0];
-open(my $fh, '<', $file) or die "Can't read source file: $!\n";
-my $script = join('', <$fh>);
-close($fh);
+my $script;
+if ($file)
+{
+  open(my $fh, '<', $file) or die "Can't read source file: $!\n";
+  $script = join('', <$fh>);
+  close($fh);
+}
+else
+{
+  $script = <STDIN>;
+}
 
 my $lexer = Lexer->new($script, $file);
 my $parser = Parser->new($lexer);

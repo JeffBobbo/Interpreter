@@ -88,7 +88,8 @@ sub peek
 sub at
 {
   my $self = shift();
-  return $self->{file} . ':' . $self->{line} . ':' . $self->{lpos};
+  my $file = $self->{file} || 'STDIN';
+  return $file . ':' . $self->{line} . ':' . $self->{lpos};
 }
 
 # advance the pos pointer and set char to the next character to parse
