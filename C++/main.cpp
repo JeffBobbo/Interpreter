@@ -2,15 +2,14 @@
 #include <sstream>
 #include <fstream>
 
+#include "Token.h"
+#include "Parser.h"
 #include "Lexer.h"
+#include "Interpreter.h"
 
 void getInputFromStdIn(std::string& script)
 {
-  std::stringstream ss;
-  ss << "{" << "\n";
-  ss << "  a = 5 ** 2;" << "\n";
-  ss << "}" << "\n";
-  script = ss.str();
+  std::getline(std::cin, script);
 }
 
 void readScript(std::string& script, std::string const& filename)
@@ -37,6 +36,7 @@ int main(int argc, char** argv)
   if (argc > 1)
     file = std::string(argv[1]);
 
+  Interpreter* interpreter = nullptr;
   try
   {
     std::string script;
@@ -45,12 +45,14 @@ int main(int argc, char** argv)
     else
       readScript(script, file);
 
-    Lexer lexer = Lexer(script, file);
-    Parser parser = Parser(lexer);
+    interpreter = new Interpreter(new Parser(new Lexer(script, file)));
+    interpreter->interpret();
   }
   catch (std::string error)
   {
     std::cerr << error << std::endl;
   }
+  if (interpreter)
+    delete interpreter;
   return 0;
 }

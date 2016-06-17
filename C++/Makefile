@@ -4,7 +4,7 @@ MAIN = main.o
 
 # general compiler settings
 CPPFLAGS=
-CXXFLAGS=-Wall -Wextra -Werror -ggdb
+CXXFLAGS=-Wall -Wextra -Werror -ggdb -std=c++11
 LDFLAGS=
 
 #default target is debug Linux
