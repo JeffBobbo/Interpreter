@@ -82,7 +82,7 @@ public:
       advance();
   }
 
-  std::string id()
+  Token* id()
   {
     std::string name;
     while (current && std::isalnum(current))
@@ -91,7 +91,7 @@ public:
       advance();
     }
 
-    return name;
+    return new TokenID(name);
   }
 
   double number()
@@ -206,7 +206,7 @@ public:
         return new TokenSemicolon();
       }
       if (std::isalpha(current))
-        return new TokenID(id());
+        return id();
       if (current == '=')
       {
         advance();

@@ -30,7 +30,7 @@ public:
       error(std::string("expected ") + Token::fromType(type) + " got " + Token::fromType(token->getType()));
   }
 
-  // factor : (ADDITION | SUBTRACTION) factor
+  // factor : (ADDITION | SUBTRACTION | BITWISE_NOT) factor
   //        | NUMBER
   //        | PARENTHESIS_L expr PARENTHESIS_R
   //        | variable
@@ -61,6 +61,7 @@ public:
     return node;
   }
 
+  // power : factor (** factor)*
   AST* power()
   {
     AST* node = factor();
@@ -73,7 +74,7 @@ public:
     return node;
   }
 
-  // term : factor ((MULTIPLICATION | DIVISION) factor)*
+  // term : power ((MULTIPLICATION | DIVISION) power)*
   AST* term()
   {
     AST* node = power();
@@ -87,8 +88,6 @@ public:
   }
 
   // expr : term ((ADDITION | SUBTRACTION) term)*
-  // term : factor ((MULTIPLICATION | DIVISION) factor)*
-  // factor: NUMBER | PARENTHESIS_L expr PARENTHESIS_R
   AST* expr()
   {
     AST* node = term();

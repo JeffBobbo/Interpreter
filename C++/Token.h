@@ -41,43 +41,43 @@ public:
       case Token::NUMBER:
         return "NUMBER";
       case Token::ADDITION:
-        return "ADDITION";
+        return "+";
       case Token::SUBTRACTION:
-        return "SUBTRACTION";
+        return "-";
       case Token::MULTIPLICATION:
-        return "MULTIPLICATION";
+        return "*";
       case Token::DIVISION:
-        return "DIVISION";
+        return "/";
       case Token::MODULO:
-        return "MODULO";
+        return "%";
       case Token::POWER:
-        return "POWER";
+        return "**";
       case Token::BITWISE_AND:
-        return "BITWISE_AND";
+        return "&";
       case Token::BITWISE_OR:
-        return "BITWISE_OR";
+        return "|";
       case Token::BITWISE_NOT:
-        return "BITWISE_NOT";
+        return "~";
       case Token::BITWISE_XOR:
-        return "BITWISE_XOR";
+        return "^";
       case Token::BITSHIFT_L:
-        return "BITSHIFT_L";
+        return "<<";
       case Token::BITSHIFT_R:
-        return "BITSHIFT_R";
+        return ">>";
       case Token::PARENTHESIS_L:
-        return "PARENTHESIS_L";
+        return "(";
       case Token::PARENTHESIS_R:
-        return "PARENTHESIS_R";
+        return ")";
       case Token::BLOCK_BEGIN:
-        return "BLOCK_BEGIN";
+        return "{";
       case Token::BLOCK_END:
-        return "BLOCK_END";
+        return "}";
       case SEMICOLON:
-        return "SEMICOLON";
+        return ";";
       case ID:
         return "ID";
       case ASSIGN:
-        return "ASSIGN";
+        return "=";
     }
     return "??";
   }
@@ -306,6 +306,5 @@ public:
 
   virtual Token::Type getType() const { return ASSIGN; };
 };
-
 
 #endif
