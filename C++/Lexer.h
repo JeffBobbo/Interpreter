@@ -82,6 +82,12 @@ public:
       advance();
   }
 
+  void skipComment()
+  {
+    while (current && (current != '\n' || (current == '*' && peek() != '/')))
+      advance();
+  }
+
   Token* id()
   {
     std::string name;
@@ -112,6 +118,11 @@ public:
       if (std::isspace(current))
       {
         skipWhitespace();
+        continue;
+      }
+      if (current == '/' && (peek() == '/' || peek() == '*'))
+      {
+        skipComment();
         continue;
       }
       if (std::isdigit(current))
